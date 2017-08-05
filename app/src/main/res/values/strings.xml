@@ -10,7 +10,7 @@
     <string name="start_stop">Start/Stop</string>
     <string name="not_saving">Not Saving</string>
     <string name="saving">Number of Readings : %d</string>
-    <string name="fsvdat">File Saved at</string>
+    <string name="fsvdat">File Saved at %s/%s</string>
     <string name="fail">File I/O Failed!</string>
     <string name="started">Started</string>
     <string name="accerror">Accelerometer Error</string>

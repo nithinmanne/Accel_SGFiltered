@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 out.write(data);
                 out.flush();
                 out.close();
-                Toast.makeText(getApplicationContext(), getString(R.string.fsvdat)+myDir+"/"+filename, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), String.format(Locale.getDefault(),getString(R.string.fsvdat), myDir, filename), Toast.LENGTH_SHORT).show();
 
             } catch (IOException e) {
                 e.printStackTrace();
