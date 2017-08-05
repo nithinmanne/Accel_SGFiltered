@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name" translatable="false">Accel_SGFiltered</string>
+    <string name="x_axis">X Axis</string>
+    <string name="y_axis">Y Axis</string>
+    <string name="z_axis">Z Axis</string>
+    <string name="accelerometer_data">Accelerometer Data</string>
+    <string name="xval">xval</string>
+    <string name="yval">yval</string>
+    <string name="zval">zval</string>
+    <string name="start_stop">Start/Stop</string>
+    <string name="not_saving">Not Saving</string>
+    <string name="saving">Number of Readings : %d</string>
+    <string name="fsvdat">File Saved at</string>
+    <string name="fail">File I/O Failed!</string>
+    <string name="started">Started</string>
+    <string name="accerror">Accelerometer Error</string>
+</resources>
