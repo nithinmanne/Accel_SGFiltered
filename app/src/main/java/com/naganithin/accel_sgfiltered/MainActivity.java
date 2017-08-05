@@ -1,11 +1,15 @@
 package com.naganithin.accel_sgfiltered;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int on = 0;
     String data = "";
     int count = 0;
+    int requestCodeP = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Toast.makeText(getApplicationContext(), R.string.accerror, Toast.LENGTH_LONG).show();
             System.exit(1);
         }
+        String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        ActivityCompat.requestPermissions(this, permissions, requestCodeP);
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == requestCodeP) {
+            if(grantResults.length!=0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) System.out.print("success");
+            else ActivityCompat.requestPermissions(this, permissions, requestCodeP);
+        }
     }
 
     @Override
