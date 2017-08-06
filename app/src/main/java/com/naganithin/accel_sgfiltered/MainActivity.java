@@ -21,10 +21,15 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+
+import mr.go.sgfilter.SGFilter;
+import mr.go.sgfilter.ZeroEliminator;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -35,10 +40,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int count = 0;
     private int requestCodeP = 0;
     private LineGraphSeries<DataPoint> series;
-    private float x = 0;
-    private float y = 0;
-    private float z = 0;
+    private CircularFifoQueue<Double> queue;
     private int lastX = 0;
+    private final int maxData = 200;
+    private final int nl = 5;
+    private final int nr = 5;
+    private final int degree = 3;
+    private SGFilter sgFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +54,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
         String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         ActivityCompat.requestPermissions(this, permissions, requestCodeP);
+        queue = new CircularFifoQueue<>(maxData);
         series = new LineGraphSeries<>();
-        series.appendData(new DataPoint(0, 0), true, 200);
+        series.appendData(new DataPoint(0, 0), true, maxData);
         GraphView graph = findViewById(R.id.graph);
         graph.addSeries(series);
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(200);
+        graph.getViewport().setMaxX(maxData);
+        sgFilter = new SGFilter(nl, nr);
+        sgFilter.appendPreprocessor(new ZeroEliminator());
     }
 
     @Override
@@ -62,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if(sensorManager != null && sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
         }
         else {
             Toast.makeText(getApplicationContext(), R.string.accerror, Toast.LENGTH_LONG).show();
@@ -72,16 +83,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void run() {
                 lastX++;
-                series.appendData(new DataPoint(lastX, Math.sqrt(x*x + y*y + z*z)), true, 200);
+                Double[] seriesData = queue.toArray(new Double[queue.size()]);
+                double[] seriesDataDouble = new double[queue.size()];
+                for (int i = 0; i < queue.size(); i++)
+                    seriesDataDouble[i] = seriesData[i];
+                double[] smooth = sgFilter.smooth(seriesDataDouble, SGFilter.computeSGCoefficients(nl, nr, degree));
+                if(queue.size()>nl+nr) series.appendData(new DataPoint(lastX, smooth[queue.size()-nl]),true, maxData);
                 mHandler.postDelayed(this, 50);
             }
         };
-        mHandler.postDelayed(mTimer, 1000);
+        mHandler.postDelayed(mTimer, 0);
     }
 
     @Override
     protected void onPause() {
-        if(on==1) return;
+        if(on==1) {
+            super.onPause();
+            return;
+        }
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if(sensorManager != null && sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -116,9 +135,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if(sensorEvent == null) return;
-        x = sensorEvent.values[0];
-        y = sensorEvent.values[1];
-        z = sensorEvent.values[2];
+        float x = sensorEvent.values[0];
+        float y = sensorEvent.values[1];
+        float z = sensorEvent.values[2];
+        queue.add(Math.sqrt(x*x+y*y+z*z));
         TextView xtv = findViewById(R.id.xvl);
         TextView ytv = findViewById(R.id.yvl);
         TextView ztv = findViewById(R.id.zvl);
