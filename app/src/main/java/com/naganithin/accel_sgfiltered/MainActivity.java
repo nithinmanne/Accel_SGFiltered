@@ -16,6 +16,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     String data = "";
     int count = 0;
     int requestCodeP = 0;
+    LineGraphSeries<DataPoint> series;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         ActivityCompat.requestPermissions(this, permissions, requestCodeP);
+        series = new LineGraphSeries<>();
     }
 
     @Override
@@ -90,6 +96,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         xtv.setText(String.format(Locale.getDefault(), "%.9f", x));
         ytv.setText(String.format(Locale.getDefault(), "%.9f", y));
         ztv.setText(String.format(Locale.getDefault(), "%.9f", z));
+        GraphView graph = findViewById(R.id.graph);
+        series.appendData(new DataPoint(System.currentTimeMillis(), Math.sqrt(x*x + y*y + z*z)), true, 50000000);
+        graph.clearAnimation();
+        graph.addSeries(series);
         if (on==1) {
             data+=(String.format(Locale.getDefault(), "%.9f", x)+" "+String.format(Locale.getDefault(), "%.9f", y)+" "+String.format(Locale.getDefault(), "%.9f", z)+" "+System.currentTimeMillis()+"\n");
             count++;
