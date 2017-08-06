@@ -4,8 +4,8 @@ android:
    - tools
    - tools #Running this twice get's the latest build tools (https://github.com/codepath/android_guides/wiki/Setting-up-Travis-CI)
    - platform-tools
-   - android-25
-   - build-tools-25.0.2
+   - android-26
+   - build-tools-26.0.1
    - extra
 
 jdk: oraclejdk8
@@ -15,5 +15,8 @@ notifications:
 
 sudo: required #The build runs out of memory and is killed if we use the container system
 
+before_install:
+  - chmod +x gradlew
+
 script:
-  - bash gradlew clean build
+  - ./gradlew clean build
