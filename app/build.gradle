@@ -28,6 +28,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.0'
     compile 'com.jjoe64:graphview:4.2.1'
     compile 'org.apache.commons:commons-math:2.2'
-    compile 'org.apache.commons:commons-collections4:4.0'
+    compile 'org.apache.commons:commons-collections4:4.1'
     implementation files('libs/sgfilter_v1_2r25.jar')
 }
