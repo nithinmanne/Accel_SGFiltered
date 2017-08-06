@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,16 +28,37 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
+    private final Handler mHandler = new Handler();
+    private Runnable mTimer;
     private int on = 0;
-    String data = "";
-    int count = 0;
-    int requestCodeP = 0;
-    LineGraphSeries<DataPoint> series;
+    private String data = "";
+    private int count = 0;
+    private int requestCodeP = 0;
+    private LineGraphSeries<DataPoint> series;
+    private float x = 0;
+    private float y = 0;
+    private float z = 0;
+    private int lastX = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        ActivityCompat.requestPermissions(this, permissions, requestCodeP);
+        series = new LineGraphSeries<>();
+        series.appendData(new DataPoint(0, 0), true, 200);
+        GraphView graph = findViewById(R.id.graph);
+        graph.addSeries(series);
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(200);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(on==1) return;
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         if(sensorManager != null && sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -46,9 +68,37 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Toast.makeText(getApplicationContext(), R.string.accerror, Toast.LENGTH_LONG).show();
             System.exit(1);
         }
-        String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        ActivityCompat.requestPermissions(this, permissions, requestCodeP);
-        series = new LineGraphSeries<>();
+        mTimer = new Runnable() {
+            @Override
+            public void run() {
+                lastX++;
+                series.appendData(new DataPoint(lastX, Math.sqrt(x*x + y*y + z*z)), true, 200);
+                mHandler.postDelayed(this, 50);
+            }
+        };
+        mHandler.postDelayed(mTimer, 1000);
+    }
+
+    @Override
+    protected void onPause() {
+        if(on==1) return;
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        if(sensorManager != null && sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
+            Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            sensorManager.unregisterListener(this, sensor);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), R.string.accerror, Toast.LENGTH_LONG).show();
+            System.exit(1);
+        }
+        mHandler.removeCallbacks(mTimer);
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(on==1) start_stop(findViewById(R.id.button));
     }
 
     @Override
@@ -66,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if(sensorEvent == null) return;
-        float x = sensorEvent.values[0];
-        float y = sensorEvent.values[1];
-        float z = sensorEvent.values[2];
+        x = sensorEvent.values[0];
+        y = sensorEvent.values[1];
+        z = sensorEvent.values[2];
         TextView xtv = findViewById(R.id.xvl);
         TextView ytv = findViewById(R.id.yvl);
         TextView ztv = findViewById(R.id.zvl);
@@ -96,10 +146,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         xtv.setText(String.format(Locale.getDefault(), "%.9f", x));
         ytv.setText(String.format(Locale.getDefault(), "%.9f", y));
         ztv.setText(String.format(Locale.getDefault(), "%.9f", z));
-        GraphView graph = findViewById(R.id.graph);
-        series.appendData(new DataPoint(System.currentTimeMillis(), Math.sqrt(x*x + y*y + z*z)), true, 50000000);
-        graph.clearAnimation();
-        graph.addSeries(series);
         if (on==1) {
             data+=(String.format(Locale.getDefault(), "%.9f", x)+" "+String.format(Locale.getDefault(), "%.9f", y)+" "+String.format(Locale.getDefault(), "%.9f", z)+" "+System.currentTimeMillis()+"\n");
             count++;
