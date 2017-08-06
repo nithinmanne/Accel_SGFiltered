@@ -15,6 +15,9 @@ This app was built using Android Studio 3.0 and Gradle 4.1
 
 3. [Savitzky-Golay-filter](https://code.google.com/archive/p/savitzky-golay-filter/)
 
+4. [GraphView 4.2.1](http://www.android-graphview.org/)
+>https://mvnrepository.com/artifact/com.jjoe64/graphview/4.2.1
+
 ## Author
 
 **Manne Naga Nithin** - [nithinmanne](https://github.com/nithinmanne)
