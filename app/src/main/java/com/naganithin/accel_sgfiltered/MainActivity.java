@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
         String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         ActivityCompat.requestPermissions(this, permissions, requestCodeP);
-        queue = new CircularFifoQueue<>(maxData);
+        queue = new CircularFifoQueue<>(nl+nr+1);
         series = new LineGraphSeries<>();
         series.appendData(new DataPoint(0, 0), true, maxData);
         GraphView graph = findViewById(R.id.graph);
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 for (int i = 0; i < queue.size(); i++)
                     seriesDataDouble[i] = seriesData[i];
                 double[] smooth = sgFilter.smooth(seriesDataDouble, SGFilter.computeSGCoefficients(nl, nr, degree));
-                if(queue.size()>nl+nr) series.appendData(new DataPoint(lastX, smooth[queue.size()-nl]),true, maxData);
+                if(queue.size()>nl+nr) series.appendData(new DataPoint(lastX, smooth[nl]),true, maxData);
                 mHandler.postDelayed(this, 50);
             }
         };
