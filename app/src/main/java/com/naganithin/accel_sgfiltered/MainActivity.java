@@ -8,7 +8,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,13 +32,11 @@ import mr.go.sgfilter.ZeroEliminator;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
-    private final Handler mHandler = new Handler();
-    private Runnable mTimer;
     private int on = 0;
     private String data = "";
     private int count = 0;
     private int requestCodeP = 0;
-    private LineGraphSeries<DataPoint> series;
+    private LineGraphSeries<DataPoint> series, series2;
     private CircularFifoQueue<Double> queue;
     private int lastX = 0;
     private final int maxData = 200;
@@ -56,13 +53,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ActivityCompat.requestPermissions(this, permissions, requestCodeP);
         queue = new CircularFifoQueue<>(nl+nr+1);
         series = new LineGraphSeries<>();
+        series2 = new LineGraphSeries<>();
         series.appendData(new DataPoint(0, 0), true, maxData);
+        series2.appendData(new DataPoint(0, 0), true, maxData);
+        series2.setColor(Color.RED);
+        series2.setThickness(1);
         GraphView graph = findViewById(R.id.graph);
         graph.addSeries(series);
+        graph.addSeries(series2);
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(0);
         graph.getViewport().setMaxX(maxData);
         sgFilter = new SGFilter(nl, nr);
+        System.out.println(degree);
         sgFilter.appendPreprocessor(new ZeroEliminator());
     }
 
@@ -79,20 +82,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Toast.makeText(getApplicationContext(), R.string.accerror, Toast.LENGTH_LONG).show();
             System.exit(1);
         }
-        mTimer = new Runnable() {
-            @Override
-            public void run() {
-                lastX++;
-                Double[] seriesData = queue.toArray(new Double[queue.size()]);
-                double[] seriesDataDouble = new double[queue.size()];
-                for (int i = 0; i < queue.size(); i++)
-                    seriesDataDouble[i] = seriesData[i];
-                double[] smooth = sgFilter.smooth(seriesDataDouble, SGFilter.computeSGCoefficients(nl, nr, degree));
-                if(queue.size()>nl+nr) series.appendData(new DataPoint(lastX, smooth[nl]),true, maxData);
-                mHandler.postDelayed(this, 50);
-            }
-        };
-        mHandler.postDelayed(mTimer, 0);
     }
 
     @Override
@@ -110,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Toast.makeText(getApplicationContext(), R.string.accerror, Toast.LENGTH_LONG).show();
             System.exit(1);
         }
-        mHandler.removeCallbacks(mTimer);
         super.onPause();
     }
 
@@ -166,6 +154,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         xtv.setText(String.format(Locale.getDefault(), "%.9f", x));
         ytv.setText(String.format(Locale.getDefault(), "%.9f", y));
         ztv.setText(String.format(Locale.getDefault(), "%.9f", z));
+        lastX++;
+        Double[] seriesData = queue.toArray(new Double[queue.size()]);
+        double[] seriesDataDouble = new double[queue.size()];
+        for (int i = 0; i < queue.size(); i++)
+            seriesDataDouble[i] = seriesData[i];
+        double[] smooth = sgFilter.smooth(seriesDataDouble, SGFilter.computeSGCoefficients(nl, nr, degree));
+        if(queue.size()>nl+nr) {
+            series.appendData(new DataPoint(lastX, smooth[nl]), true, maxData);
+            series2.appendData(new DataPoint(lastX, queue.get(nl)), true, maxData);
+        }
         if (on==1) {
             data+=(String.format(Locale.getDefault(), "%.9f", x)+" "+String.format(Locale.getDefault(), "%.9f", y)+" "+String.format(Locale.getDefault(), "%.9f", z)+" "+System.currentTimeMillis()+"\n");
             count++;
