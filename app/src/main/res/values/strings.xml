@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Accel_SGFiltered</string>
+    <string name="app_name" translatable="false">GyroTron</string>
     <string name="x_axis">X Axis</string>
     <string name="y_axis">Y Axis</string>
     <string name="z_axis">Z Axis</string>
