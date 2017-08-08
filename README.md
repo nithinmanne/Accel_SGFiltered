@@ -1,4 +1,4 @@
-# Accel_SGFiltered [![Build Status](https://travis-ci.org/nithinmanne/Accel_SGFiltered.svg?branch=master)](https://travis-ci.org/nithinmanne/Accel_SGFiltered)
+# Accel_SGFiltered [![Build Status](https://travis-ci.org/nithinmanne/Accel_SGFiltered.svg?branch=master)](https://travis-ci.org/nithinmanne/Accel_SGFiltered) <a style="margin-bottom: 0;" href='https://play.google.com/store/apps/details?id=com.naganithin.accel_sgfiltered'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="80px"/></a>
 
 This repository contains the source code for the Accelerometer app with SGolay Filtering.
 
