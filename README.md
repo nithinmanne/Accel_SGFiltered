@@ -4,7 +4,7 @@ This repository contains the source code for the Accelerometer app with SGolay F
 
 This app is created for an assignment of Programmable and Embedded Systems.
 
-This app was built using Android Studio 3.0 and Gradle 4.1
+This app was built using [Android Studio 3.0](https://developer.android.com/studio/preview/index.html) and Gradle 4.1
 
 Ph No. +91-7076607344
 
