@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "403901318026",
+    "firebase_url": "https://accelsgfiltered.firebaseio.com",
+    "project_id": "accelsgfiltered",
+    "storage_bucket": "accelsgfiltered.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:403901318026:android:ad90da4e1f1f74d7",
+        "android_client_info": {
+          "package_name": "com.naganithin.accel_sgfiltered"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "403901318026-h2a5qcmqvukeovfastkthk2dj4rnhi50.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.naganithin.accel_sgfiltered",
+            "certificate_hash": "93748b401e8ee2299967130f8da16aea8e1211c7"
+          }
+        },
+        {
+          "client_id": "403901318026-nrfrlv849gn40kjfcei655401rbu2ona.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBz8UAyV9Pex580c1q2DNsutLOT2dSbjvQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "403901318026-nrfrlv849gn40kjfcei655401rbu2ona.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
