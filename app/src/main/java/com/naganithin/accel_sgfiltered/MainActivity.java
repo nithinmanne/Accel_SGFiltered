@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -26,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
+import java.util.UUID;
 
 import mr.go.sgfilter.SGFilter;
 import mr.go.sgfilter.ZeroEliminator;
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private final int nr = 5;
     private final int degree = 3;
     private SGFilter sgFilter;
+    String uniqueID = UUID.randomUUID().toString();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sgFilter = new SGFilter(nl, nr);
         System.out.println(degree);
         sgFilter.appendPreprocessor(new ZeroEliminator());
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+        myRef.setValue("Hello World");
     }
 
     @Override
@@ -163,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(queue.size()>nl+nr) {
             series.appendData(new DataPoint(lastX, smooth[nl]), true, maxData);
             series2.appendData(new DataPoint(lastX, queue.get(nl)), true, maxData);
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("acc_data"+uniqueID);
+            myRef.setValue(smooth[nl]);
         }
         if (on==1) {
             data+=(String.format(Locale.getDefault(), "%.9f", x)+" "+String.format(Locale.getDefault(), "%.9f", y)+" "+String.format(Locale.getDefault(), "%.9f", z)+" "+System.currentTimeMillis()+"\n");
