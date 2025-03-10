@@ -8,8 +8,8 @@ android {
         applicationId "com.naganithin.accel_sgfiltered"
         minSdkVersion 21
         targetSdkVersion 35
-        versionCode 3
-        versionName '1.0.2'
+        versionCode 4
+        versionName '1.0.3'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
