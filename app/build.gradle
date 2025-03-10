@@ -1,14 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    namespace "com.naganithin.accel_sgfiltered"
+    compileSdkVersion 35
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.naganithin.accel_sgfiltered"
         minSdkVersion 21
-        targetSdkVersion 27
-        versionCode 2
-        versionName '1.0.1'
+        targetSdkVersion 35
+        versionCode 3
+        versionName '1.0.2'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

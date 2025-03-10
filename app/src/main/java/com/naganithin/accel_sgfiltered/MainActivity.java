@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        ActivityCompat.requestPermissions(this, permissions, requestCodeP);
+//        String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+//        ActivityCompat.requestPermissions(this, permissions, requestCodeP);
         queue = new CircularFifoQueue<>(nl+nr+1);
         series = new LineGraphSeries<>();
         series2 = new LineGraphSeries<>();
@@ -175,36 +175,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     public void start_stop(View v) {
-        if (on==1) {
-            File myDir = new File(Environment.getExternalStorageDirectory(), "acc_data/");
-            String filename = "acc_data_"+System.currentTimeMillis()+".txt";
-            try {
-                boolean res = myDir.mkdirs();
-                File file = new File(myDir, filename);
-                res = res ^ file.createNewFile();
-                System.out.print(res);
-                PrintWriter out = new PrintWriter(file);
-                out.write(data);
-                out.flush();
-                out.close();
-                Toast.makeText(getApplicationContext(), String.format(Locale.getDefault(),getString(R.string.fsvdat), myDir, filename), Toast.LENGTH_SHORT).show();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(getApplicationContext(), getString(R.string.fail)+e, Toast.LENGTH_SHORT).show();
-            }
-            TextView saveM = findViewById(R.id.saveMessage);
-            saveM.setText(getString(R.string.not_saving));
-        }
-        else {
-            count = 0;
-            TextView saveM = findViewById(R.id.saveMessage);
-            saveM.setText(String.format(getString(R.string.saving),count));
-            Toast.makeText(getApplicationContext(), R.string.started, Toast.LENGTH_SHORT).show();
-            data = "";
-        }
-        on = 1 - on;
-        System.out.print(v);
+        Toast.makeText(getApplicationContext(), getString(R.string.version_error), Toast.LENGTH_SHORT).show();
+        return;
+//        if (on==1) {
+//            File myDir = new File(Environment.getExternalStorageDirectory(), "acc_data/");
+//            String filename = "acc_data_"+System.currentTimeMillis()+".txt";
+//            try {
+//                boolean res = myDir.mkdirs();
+//                File file = new File(myDir, filename);
+//                res = res ^ file.createNewFile();
+//                System.out.print(res);
+//                PrintWriter out = new PrintWriter(file);
+//                out.write(data);
+//                out.flush();
+//                out.close();
+//                Toast.makeText(getApplicationContext(), String.format(Locale.getDefault(),getString(R.string.fsvdat), myDir, filename), Toast.LENGTH_SHORT).show();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                Toast.makeText(getApplicationContext(), getString(R.string.fail)+e, Toast.LENGTH_SHORT).show();
+//            }
+//            TextView saveM = findViewById(R.id.saveMessage);
+//            saveM.setText(getString(R.string.not_saving));
+//        }
+//        else {
+//            count = 0;
+//            TextView saveM = findViewById(R.id.saveMessage);
+//            saveM.setText(String.format(getString(R.string.saving),count));
+//            Toast.makeText(getApplicationContext(), R.string.started, Toast.LENGTH_SHORT).show();
+//            data = "";
+//        }
+//        on = 1 - on;
+//        System.out.print(v);
     }
 
 }

@@ -14,4 +14,5 @@
     <string name="fail">File I/O Failed!</string>
     <string name="started">Started</string>
     <string name="accerror">Accelerometer Error</string>
+    <string name="version_error">Feature Not Supported</string>
 </resources>
